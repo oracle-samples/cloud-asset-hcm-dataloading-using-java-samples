@@ -1,0 +1,12 @@
+FUSION_USERNAME=HCM_IMPL
+DATAPATH=C:\\My\\Assets\\cloud.asset.hcm.java-dataload-example\\data\\
+HCM_DATA_LOADER_SERVICE_WSDL_LOCATION=https://<<FusionURL>/hcmCommonDataLoader/HCMDataLoader?wsdl
+UCM_IDC_WEBSERVICE_LOCATION=https://<FusionURL>/idcws/GenericSoapPort
+KEYSTORE_LOCATION=C:\\temp\\DemoTrust.jks
+KEYSTORE_ALIAS=orakey
+GETDATASETSTATUS_DELAY=5
+OK=OK
+ERROR=Error
+WARNING=Warning
+CSV_FILE_ENCODING=UTF-8
+DATA_SEPERATOR=;

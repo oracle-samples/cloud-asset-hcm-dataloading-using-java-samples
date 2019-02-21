@@ -1,0 +1,10 @@
+*.jar
+*.class
+*/classes
+hcmimport.properties
+*.zip
+.scannerwork
+sonar-project.properties
+.data
+*.new.*
+*.new

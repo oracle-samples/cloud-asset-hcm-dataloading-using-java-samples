@@ -1,0 +1,857 @@
+<!-- 
+Copyright © 2018, Oracle and/or its affiliates. All rights reserved.
+
+The Universal Permissive License (UPL), Version 1.0
+-->
+<wsdl:definitions
+     name="HCMDataLoader"
+     targetNamespace="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/"
+     xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:types="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/types/"
+    >
+    <wsdl:documentation xmlns:oer="http://xmlns.oracle.com/oer">
+        <name>Data Loader Service</name>
+        <description>Provides service access to HCM Data Loader functionality to automate
+            the bulk loading of data</description>
+        <docCategories>
+            <category>Integration</category>
+        </docCategories>
+        <oer:lifecycle>Active</oer:lifecycle>
+        <oer:compatibility>Supported - Backward Compatibility Assured</oer:compatibility>
+        <oer:category name="lba">
+            <value>HcmTop-HcmTop : HcmCommonTop-Common Repository :
+                HcmCommonDataLoader-Data Loader</value>
+        </oer:category>
+        <oer:operation name="importAndLoadData">
+            <description>Initiates bulk loading of file-based data to Oracle Fusion HCM
+                using HCM Data Loader</description>
+            <oer:lifecycle>Active</oer:lifecycle>
+            <oer:parameters>
+                <oer:parameter name="ContentId" description="The WebCenter Content identifier of the file to be imported and loaded using HCM Data Loader"/>
+                <oer:parameter name="Parameters" description="Parameters passed as name and value pairs"/>
+                <oer:return description="InitiateDataImportandLoad job submission request Id"/>
+            </oer:parameters>
+        </oer:operation>
+        <oer:operation name="getDfltObjAttrHints">
+            <description>An operation to retrieve user interface hints, such as the
+                service data object label and object attribute labels, for the
+                specified service data object and locale.  As a prerequisite,
+                invoke the getEntityList operation defined on this service to
+                get the list of possible values for the viewName request payload
+                element.</description>
+            <oer:parameters>
+                <oer:parameter name="viewName" description="The service view usage name, an internal name for the service data object.  Specify the value of the &lt;name&gt; element from the getEntityList operation response payload."/>
+                <oer:parameter name="localeName" description="The locale to use when evaluating locale-based user interface hints.  The localeName is in ISO 639-1 format."/>
+                <oer:return description="The label and user interface hints for the specified service data object and its attributes in a name-value pair format."/>
+            </oer:parameters>
+        </oer:operation>
+        <oer:operation name="getServiceLastUpdateTime">
+            <description>An operation that returns the date and time when the schema
+                files referenced in the service definition last changed.</description>
+            <oer:parameters>
+                <oer:return description="The date and time when the service definition last changed in ISO 8601 format."/>
+            </oer:parameters>
+        </oer:operation>
+        <oer:operation name="getEntityList">
+            <description>An operation to get the list of service data objects defined on
+                this service.</description>
+            <oer:parameters>
+                <oer:return description="A list of service data objects defined on this service.  For each service data object, the result includes the QName, internal name, and Boolean values indicating whether create, update, merge, and delete operations can be performed on the object."/>
+            </oer:parameters>
+        </oer:operation>
+        <oer:operation name="getDataSetStatus">
+            <description>The operation will provide the information required for
+                monitoring systems to understand the status of, and error
+                messages 
+raised for the Data Set.</description>
+            <oer:lifecycle>Active</oer:lifecycle>
+            <oer:parameters>
+                <oer:parameter name="Parameters" description="Parameters passed as name and value pairs"/>
+                <oer:return description="Response xml returned for the input passed"/>
+            </oer:parameters>
+        </oer:operation>
+    </wsdl:documentation>
+    <plnk:partnerLinkType name="HCMDataLoader">
+        <plnk:role name="HCMDataLoaderProvider">
+            <plnk:portType name="tns:HCMDataLoader"/>
+        </plnk:role>
+        <plnk:role name="HCMDataLoaderRequestor">
+            <plnk:portType name="tns:HCMDataLoaderResponse"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsp:Policy xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+         wsu:Id="HCMDataLoaderSoapHttpPort_Fault_Policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+        <wsp:ExactlyOne>
+            <wsp:All/>
+            <wsp:All/>
+            <wsp:All/>
+            <wsp:All/>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+         wsu:Id="HCMDataLoaderSoapHttpPort_Input_Policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+                    <sp:Header Name="fmw-context" Namespace="http://xmlns.oracle.com/fmw/context/1.0"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="fmw-context" Namespace="http://xmlns.oracle.com/fmw/context/1.0"/>
+                </sp:EncryptedParts>
+            </wsp:All>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+                    <sp:Header Name="fmw-context" Namespace="http://xmlns.oracle.com/fmw/context/1.0"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="fmw-context" Namespace="http://xmlns.oracle.com/fmw/context/1.0"/>
+                </sp:EncryptedParts>
+            </wsp:All>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+                    <sp:Header Name="fmw-context" Namespace="http://xmlns.oracle.com/fmw/context/1.0"/>
+                    <sp:Header Name="SignatureConfirmation" Namespace="http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="fmw-context" Namespace="http://xmlns.oracle.com/fmw/context/1.0"/>
+                </sp:EncryptedParts>
+            </wsp:All>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+                    <sp:Header Name="fmw-context" Namespace="http://xmlns.oracle.com/fmw/context/1.0"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="fmw-context" Namespace="http://xmlns.oracle.com/fmw/context/1.0"/>
+                </sp:EncryptedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+         wsu:Id="HCMDataLoaderSoapHttpPort_Output_Policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+         wsu:Id="wsaddr_policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+        <wsaw:UsingAddressing xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"/>
+    </wsp:Policy>
+    <wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+         wsu:Id="wss11_saml_or_username_token_with_message_protection_service_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SymmetricBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:ProtectionToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Never">
+                                    <wsp:Policy>
+                                        <sp:RequireThumbprintReference/>
+                                        <sp:WssX509V3Token11/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:ProtectionToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic128/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                        <sp:ProtectTokens/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                    </wsp:Policy>
+                </sp:SymmetricBinding>
+                <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:SamlToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssSamlV11Token11/>
+                            </wsp:Policy>
+                        </sp:SamlToken>
+                    </wsp:Policy>
+                </sp:SignedSupportingTokens>
+                <sp:EndorsingSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssX509V3Token11/>
+                            </wsp:Policy>
+                        </sp:X509Token>
+                    </wsp:Policy>
+                </sp:EndorsingSupportingTokens>
+                <sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:RequireSignatureConfirmation/>
+                        <sp:MustSupportRefEncryptedKey/>
+                    </wsp:Policy>
+                </sp:Wss11>
+            </wsp:All>
+            <wsp:All>
+                <sp:SymmetricBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:ProtectionToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Never">
+                                    <wsp:Policy>
+                                        <sp:RequireThumbprintReference/>
+                                        <sp:WssX509V3Token11/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:ProtectionToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic128Exn256/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                        <sp:ProtectTokens/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                    </wsp:Policy>
+                </sp:SymmetricBinding>
+                <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:SamlToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssSamlV11Token11/>
+                            </wsp:Policy>
+                        </sp:SamlToken>
+                    </wsp:Policy>
+                </sp:SignedSupportingTokens>
+                <sp:EndorsingSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssX509V3Token11/>
+                            </wsp:Policy>
+                        </sp:X509Token>
+                    </wsp:Policy>
+                </sp:EndorsingSupportingTokens>
+                <sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:RequireSignatureConfirmation/>
+                        <sp:MustSupportRefEncryptedKey/>
+                    </wsp:Policy>
+                </sp:Wss11>
+            </wsp:All>
+            <wsp:All>
+                <sp:SymmetricBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:ProtectionToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Never">
+                                    <wsp:Policy>
+                                        <sp:RequireThumbprintReference/>
+                                        <sp:WssX509V3Token11/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:ProtectionToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic128/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                    </wsp:Policy>
+                </sp:SymmetricBinding>
+                <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssUsernameToken10/>
+                            </wsp:Policy>
+                        </sp:UsernameToken>
+                    </wsp:Policy>
+                </sp:SignedSupportingTokens>
+                <sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:RequireSignatureConfirmation/>
+                        <sp:MustSupportRefEncryptedKey/>
+                    </wsp:Policy>
+                </sp:Wss11>
+            </wsp:All>
+            <wsp:All>
+                <sp:SymmetricBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:ProtectionToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Never">
+                                    <wsp:Policy>
+                                        <sp:RequireThumbprintReference/>
+                                        <sp:WssX509V3Token11/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:ProtectionToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic128Exn256/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                    </wsp:Policy>
+                </sp:SymmetricBinding>
+                <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssUsernameToken10/>
+                            </wsp:Policy>
+                        </sp:UsernameToken>
+                    </wsp:Policy>
+                </sp:SignedSupportingTokens>
+                <sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:RequireSignatureConfirmation/>
+                        <sp:MustSupportRefEncryptedKey/>
+                    </wsp:Policy>
+                </sp:Wss11>
+            </wsp:All>
+            <wsp:All>
+                <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:TransportToken>
+                            <wsp:Policy>
+                                <sp:HttpsToken RequireClientCertificate="false">
+                                    <wsp:Policy/>
+                                </sp:HttpsToken>
+                            </wsp:Policy>
+                        </sp:TransportToken>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                    </wsp:Policy>
+                </sp:TransportBinding>
+                <sp:SupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:SamlToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssSamlV11Token10/>
+                            </wsp:Policy>
+                        </sp:SamlToken>
+                    </wsp:Policy>
+                </sp:SupportingTokens>
+            </wsp:All>
+            <wsp:All>
+                <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:TransportToken>
+                            <wsp:Policy>
+                                <sp:HttpsToken RequireClientCertificate="false">
+                                    <wsp:Policy/>
+                                </sp:HttpsToken>
+                            </wsp:Policy>
+                        </sp:TransportToken>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                    </wsp:Policy>
+                </sp:TransportBinding>
+                <sp:SupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssUsernameToken10/>
+                            </wsp:Policy>
+                        </sp:UsernameToken>
+                    </wsp:Policy>
+                </sp:SupportingTokens>
+            </wsp:All>
+            <wsp:All>
+                <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:TransportToken>
+                            <wsp:Policy>
+                                <sp:HttpsToken RequireClientCertificate="false">
+                                    <wsp:Policy/>
+                                </sp:HttpsToken>
+                            </wsp:Policy>
+                        </sp:TransportToken>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                    </wsp:Policy>
+                </sp:TransportBinding>
+            </wsp:All>
+            <wsp:All>
+                <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:TransportToken>
+                            <wsp:Policy>
+                                <sp:HttpsToken RequireClientCertificate="false">
+                                    <wsp:Policy>
+                                        <osp:HttpJwtAuthentication xmlns:osp="http://schemas.oracle.com/ws/2012/01/wssecuritypolicy"/>
+                                    </wsp:Policy>
+                                </sp:HttpsToken>
+                            </wsp:Policy>
+                        </sp:TransportToken>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Lax/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                    </wsp:Policy>
+                </sp:TransportBinding>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns="http://schemas.xmlsoap.org/ws/2004/09/policy"
+         xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+         wsu:Id="wss_saml_token_bearer_over_ssl_client_policy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+            <wsp:Policy>
+                <sp:TransportToken>
+                    <wsp:Policy>
+                        <sp:HttpsToken RequireClientCertificate="false">
+                            <wsp:Policy/>
+                        </sp:HttpsToken>
+                    </wsp:Policy>
+                </sp:TransportToken>
+                <sp:Layout>
+                    <wsp:Policy>
+                        <sp:Lax/>
+                    </wsp:Policy>
+                </sp:Layout>
+                <sp:IncludeTimestamp/>
+            </wsp:Policy>
+        </sp:TransportBinding>
+        <sp:SupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+            <wsp:Policy>
+                <sp:SamlToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                    <wsp:Policy>
+                        <sp:WssSamlV11Token10/>
+                    </wsp:Policy>
+                </sp:SamlToken>
+            </wsp:Policy>
+        </sp:SupportingTokens>
+    </wsp:Policy>
+    <wsdl:import namespace="http://xmlns.oracle.com/adf/svc/errors/" location="ServiceException.wsdl"/>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" schemaLocation="oracle_webservices_async_fault_11_0.xsd"/>
+            <import namespace="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/types/"
+                 schemaLocation="HCMDataLoader.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="HCMDataLoader_importAndLoadData">
+        <wsdl:part name="parameters" element="types:importAndLoadData"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_importAndLoadDataResponse">
+        <wsdl:part name="parameters" element="types:importAndLoadDataResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_importAndLoadDataAsync">
+        <wsdl:part name="parameters" element="types:importAndLoadDataAsync"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getDfltObjAttrHints">
+        <wsdl:part name="parameters" element="types:getDfltObjAttrHints"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getDfltObjAttrHintsResponse">
+        <wsdl:part name="parameters" element="types:getDfltObjAttrHintsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getServiceLastUpdateTime">
+        <wsdl:part name="parameters" element="types:getServiceLastUpdateTime"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getServiceLastUpdateTimeResponse">
+        <wsdl:part name="parameters" element="types:getServiceLastUpdateTimeResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getEntityList">
+        <wsdl:part name="parameters" element="types:getEntityList"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getEntityListResponse">
+        <wsdl:part name="parameters" element="types:getEntityListResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getEntityListAsync">
+        <wsdl:part name="parameters" element="types:getEntityListAsync"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getDfltObjAttrHintsAsync">
+        <wsdl:part name="parameters" element="types:getDfltObjAttrHintsAsync"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getServiceLastUpdateTimeAsync">
+        <wsdl:part name="parameters" element="types:getServiceLastUpdateTimeAsync"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getDataSetStatus">
+        <wsdl:part name="parameters" element="types:getDataSetStatus"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getDataSetStatusResponse">
+        <wsdl:part name="parameters" element="types:getDataSetStatusResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getDataSetStatusAsync">
+        <wsdl:part name="parameters" element="types:getDataSetStatusAsync"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_onFault">
+        <wsdl:part name="parameters" element="orafault:Fault"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_importAndLoadDataAsyncResponse">
+        <wsdl:part name="parameters" element="types:importAndLoadDataAsyncResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getEntityListAsyncResponse">
+        <wsdl:part name="parameters" element="types:getEntityListAsyncResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getDfltObjAttrHintsAsyncResponse">
+        <wsdl:part name="parameters" element="types:getDfltObjAttrHintsAsyncResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getServiceLastUpdateTimeAsyncResponse">
+        <wsdl:part name="parameters" element="types:getServiceLastUpdateTimeAsyncResponse"/>
+    </wsdl:message>
+    <wsdl:message name="HCMDataLoader_getDataSetStatusAsyncResponse">
+        <wsdl:part name="parameters" element="types:getDataSetStatusAsyncResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="HCMDataLoader">
+        <wsdl:documentation/>
+        <wsdl:operation name="importAndLoadData">
+            <wsdl:input message="tns:HCMDataLoader_importAndLoadData"/>
+            <wsdl:output message="tns:HCMDataLoader_importAndLoadDataResponse"/>
+            <wsdl:fault name="ServiceException" message="errors:ServiceException"/>
+        </wsdl:operation>
+        <wsdl:operation name="importAndLoadDataAsync">
+            <wsdl:input message="tns:HCMDataLoader_importAndLoadDataAsync" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/importAndLoadDataAsync"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDfltObjAttrHints">
+            <wsdl:input message="tns:HCMDataLoader_getDfltObjAttrHints"/>
+            <wsdl:output message="tns:HCMDataLoader_getDfltObjAttrHintsResponse"/>
+            <wsdl:fault name="ServiceException" message="errors:ServiceException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getServiceLastUpdateTime">
+            <wsdl:input message="tns:HCMDataLoader_getServiceLastUpdateTime"/>
+            <wsdl:output message="tns:HCMDataLoader_getServiceLastUpdateTimeResponse"/>
+            <wsdl:fault name="ServiceException" message="errors:ServiceException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getEntityList">
+            <wsdl:input message="tns:HCMDataLoader_getEntityList"/>
+            <wsdl:output message="tns:HCMDataLoader_getEntityListResponse"/>
+            <wsdl:fault name="ServiceException" message="errors:ServiceException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getEntityListAsync">
+            <wsdl:input message="tns:HCMDataLoader_getEntityListAsync" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getEntityListAsync"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDfltObjAttrHintsAsync">
+            <wsdl:input message="tns:HCMDataLoader_getDfltObjAttrHintsAsync" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDfltObjAttrHintsAsync"/>
+        </wsdl:operation>
+        <wsdl:operation name="getServiceLastUpdateTimeAsync">
+            <wsdl:input message="tns:HCMDataLoader_getServiceLastUpdateTimeAsync" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getServiceLastUpdateTimeAsync"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDataSetStatus">
+            <wsdl:input message="tns:HCMDataLoader_getDataSetStatus"/>
+            <wsdl:output message="tns:HCMDataLoader_getDataSetStatusResponse"/>
+            <wsdl:fault name="ServiceException" message="errors:ServiceException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDataSetStatusAsync">
+            <wsdl:input message="tns:HCMDataLoader_getDataSetStatusAsync" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDataSetStatusAsync"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="HCMDataLoaderResponse">
+        <wsdl:operation name="onFault">
+            <wsdl:input message="tns:HCMDataLoader_onFault" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0/Fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="importAndLoadDataAsyncResponse">
+            <wsdl:input message="tns:HCMDataLoader_importAndLoadDataAsyncResponse" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/importAndLoadDataAsyncResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getEntityListAsyncResponse">
+            <wsdl:input message="tns:HCMDataLoader_getEntityListAsyncResponse" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getEntityListAsyncResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDfltObjAttrHintsAsyncResponse">
+            <wsdl:input message="tns:HCMDataLoader_getDfltObjAttrHintsAsyncResponse" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDfltObjAttrHintsAsyncResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getServiceLastUpdateTimeAsyncResponse">
+            <wsdl:input message="tns:HCMDataLoader_getServiceLastUpdateTimeAsyncResponse" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getServiceLastUpdateTimeAsyncResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDataSetStatusAsyncResponse">
+            <wsdl:input message="tns:HCMDataLoader_getDataSetStatusAsyncResponse" xmlns:ns1="http://www.w3.org/2006/05/addressing/wsdl"
+                 ns1:Action="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDataSetStatusAsyncResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="HCMDataLoaderSoapHttp" type="tns:HCMDataLoader">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#wss11_saml_or_username_token_with_message_protection_service_policy"
+             wsdl:required="false"/>
+        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#wsaddr_policy"
+             wsdl:required="false"/>
+        <wsdl:operation name="importAndLoadData">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/importAndLoadData"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Output_Policy"
+                     wsdl:required="false"/>
+            </wsdl:output>
+            <wsdl:fault name="ServiceException">
+                <soap:fault name="ServiceException" use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Fault_Policy"
+                     wsdl:required="false"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="importAndLoadDataAsync">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/importAndLoadDataAsync"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getDfltObjAttrHints">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDfltObjAttrHints"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Output_Policy"
+                     wsdl:required="false"/>
+            </wsdl:output>
+            <wsdl:fault name="ServiceException">
+                <soap:fault name="ServiceException" use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Fault_Policy"
+                     wsdl:required="false"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getServiceLastUpdateTime">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getServiceLastUpdateTime"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Output_Policy"
+                     wsdl:required="false"/>
+            </wsdl:output>
+            <wsdl:fault name="ServiceException">
+                <soap:fault name="ServiceException" use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Fault_Policy"
+                     wsdl:required="false"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getEntityList">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getEntityList"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Output_Policy"
+                     wsdl:required="false"/>
+            </wsdl:output>
+            <wsdl:fault name="ServiceException">
+                <soap:fault name="ServiceException" use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Fault_Policy"
+                     wsdl:required="false"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getEntityListAsync">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getEntityListAsync"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getDfltObjAttrHintsAsync">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDfltObjAttrHintsAsync"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getServiceLastUpdateTimeAsync">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getServiceLastUpdateTimeAsync"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getDataSetStatus">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDataSetStatus"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Output_Policy"
+                     wsdl:required="false"/>
+            </wsdl:output>
+            <wsdl:fault name="ServiceException">
+                <soap:fault name="ServiceException" use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Fault_Policy"
+                     wsdl:required="false"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getDataSetStatusAsync">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDataSetStatusAsync"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#HCMDataLoaderSoapHttpPort_Input_Policy"
+                     wsdl:required="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="HCMDataLoaderResponseBinding" type="tns:HCMDataLoaderResponse">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#wss_saml_token_bearer_over_ssl_client_policy"
+             wsdl:required="false"/>
+        <wsdl:operation name="onFault">
+            <soap:operation soapAction="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0/Fault"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="importAndLoadDataAsyncResponse">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/importAndLoadDataAsyncResponse"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getEntityListAsyncResponse">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getEntityListAsyncResponse"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getDfltObjAttrHintsAsyncResponse">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDfltObjAttrHintsAsyncResponse"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getServiceLastUpdateTimeAsyncResponse">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getServiceLastUpdateTimeAsyncResponse"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="getDataSetStatusAsyncResponse">
+            <soap:operation soapAction="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/getDataSetStatusAsyncResponse"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="HCMDataLoader">
+        <wsdl:port name="HCMDataLoaderSoapHttpPort" binding="tns:HCMDataLoaderSoapHttp">
+            <soap:address location="https://xxxx.yyy.com:443/hcmService/HCMDataLoader"/>
+            <wsa:EndpointReference xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                <wsa:Address xmlns:wsa="http://www.w3.org/2005/08/addressing">xxx.yyy.com:443/hcmService/HCMDataLoader</wsa:Address>
+                <wsid:Identity xmlns:wsid="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+                    <dsig:KeyInfo xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+                        <dsig:X509Data>
+                            <dsig:X509Certificate>MIIDbDCCAlSgAwIBAgIGAVMkh+/kMA0GCSqGSIb3DQEBCwUAMHgxCzAJBgNVBAYTAlVTMRAwDgYDVQQIEwdNeVN0YXRlMQ8wDQYDVQQHEwZNeVRvd24xFzAVBgNVBAoTDk15T3JnYW5pemF0aW9uMRkwFwYDVQQLExBGT1IgVEVTVElORyBPTkxZMRIwEAYDVQQDEwlDZXJ0R2VuQ0EwHhcNMTYwMjI3MjEwMDAxWhcNMjEwMjI1MjEwMDAxWjBTMRMwEQYKCZImiZPyLGQBGRYDY29tMRYwFAYKCZImiZPyLGQBGRYGb3JhY2xlMRIwEAYKCZImiZPyLGQBGRYCdXMxEDAOBgNVBAMTB3NlcnZpY2UwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCUXJX+MR0yM7jCR3MZdc6T/yrgo+NzchuEhqG17jbkM19kj7/DHZ77nmxk7CoT6yr4a6ggUtLQJ/TiVhb5f0fQe3GAX+bTlBuwsTrdAwhtqClSB4mnbwPyfGebrCI/urpw8oCYIHlnwkYc9veJQzMwLmrGiNwRSt3iiHoTgdXub1TGiHjS/a//aUQFHpyqohTwmEzeQ4LX+u/EqHUXf8mxmD4GT0TMwZn0TQWrxgvqowE6wtoHBzGWPh00WE5l0lQZa+UVoyELSoaSYTKrEg9X3AJFrWdhpB4qIe4vWAmt8kmUfnVYimJsC8aIfdlf7bpqcH2+FjlDqgppWkmGtoplAgMBAAGjITAfMB0GA1UdDgQWBBSb1ibMbas9I5SxaKsg3FiWaDirwjANBgkqhkiG9w0BAQsFAAOCAQEAR+mRkpQLvCbU1x45OnZ0ykZD6AIamL5h1ggWksXDPUHLL92wlzndXOzrkpQyjB6plOY6jIZbQaxsHN0RyAJvvDX1uoV/iuDZ7yZdRGAHN+H5bpPKLPhBMzDCFlsnhX1BKydklQ+4TKPcIciE3Fk3VJY4JPR7hCA4zKcr34frHRo9iqZTXzC1Td7XTXpRx95hYfL8Jr+Yxo0oub2GDpq8vbJZvrbs5F6Y6WGEPDbnX7UBquvwNXVxdqLPGSd5QapBpn2z2aa66ivuG8dCVZVt7CkVa1N8Jtf5fFKTBQui+ydKK1yeiOscEhFCvCWqOEjRH1MSJXyPEbYbYbi/+uC0hA==</dsig:X509Certificate>
+                            <dsig:X509IssuerSerial>
+                                <dsig:X509IssuerName>CN=CertGenCA, OU=FOR TESTING ONLY, O=MyOrganization, L=MyTown, ST=MyState, C=US</dsig:X509IssuerName>
+                                <dsig:X509SerialNumber>1456606801892</dsig:X509SerialNumber>
+                            </dsig:X509IssuerSerial>
+                            <dsig:X509SubjectName>CN=service, DC=us, DC=oracle, DC=com</dsig:X509SubjectName>
+                            <dsig:X509SKI>m9YmzG2rPSOUsWirINxYlmg4q8I=</dsig:X509SKI>
+                            <dsig:X509Certificate>MIIDvzCCAqegAwIBAgIQQARIhsRB7ztkOoBmQJr8oDANBgkqhkiG9w0BAQsFADB4MQswCQYDVQQGEwJVUzEQMA4GA1UECAwHTXlTdGF0ZTEPMA0GA1UEBwwGTXlUb3duMRcwFQYDVQQKDA5NeU9yZ2FuaXphdGlvbjEZMBcGA1UECwwQRk9SIFRFU1RJTkcgT05MWTESMBAGA1UEAwwJQ2VydEdlbkNBMB4XDTEyMTIwMTAzMDc1MVoXDTMyMTIwMjAzMDc1MVoweDELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB015U3RhdGUxDzANBgNVBAcMBk15VG93bjEXMBUGA1UECgwOTXlPcmdhbml6YXRpb24xGTAXBgNVBAsMEEZPUiBURVNUSU5HIE9OTFkxEjAQBgNVBAMMCUNlcnRHZW5DQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKrdcNthuXGyFT2bNEb9CvWQ9khOemzobw5+DC4BPfr5WYeoFaUicduQIMK1fOVP4ScAJRLJLJ53n93lTJysUAquC1nCRXtpp8MeXtKKISn6y+9FrtkhHHiSGWh7hcgtB6xT8oE4XBpGHeljlP9rDwhq1iFy4QjuOTbqFjUPx7GZ9tqQCPjTk4iAi8pfAXES6FZMMH+M+pnBjnKRosY8l6bt3LIDrnxzd86ZQfHHaniK02eGtiOrjbH6o2HpzZfrmDHYnYkjh9dKx2WGA+t4eZmaOJdXAWFVDx9hR+2xxpAmemRvR7GwUry/9hbjVTQ0M1VLvU/ZC3FfyCr2y3snCikCAwEAAaNFMEMwDgYDVR0PAQH/BAQDAgIEMBIGA1UdEwEB/wQIMAYBAf8CAQEwHQYDVR0OBBYEFDQ4/UXYgM/H0ujfHfihObARiABqMA0GCSqGSIb3DQEBCwUAA4IBAQAXaXTPy5ZEMxezcA8q/6hjzHrIzXRZmd4QFv49FwBxuLD8xD+2sG13eJ+Dm+oio9rXNQDWxfM38Xwo36roLSoTnDhjtwjSDg0gk4Y9ovCGuSu0aj/G+2F3Nu5gB77CDuQzDOgIsTol3DviRzDxRkMGhe6rO2UpEjXU2ajskNtgak0Tme69Kaq7H5bJiPPjYzRzddRd7rcmzXjpqh64QhUB89kqZMRwHR7lmO8eeB9s333/S916U7LIDg0nJ0DbjRBHWy70dImFKhtqaj9l2SUrk6UzzgPMjmThn/E8pKsPxSg2Rrn0JGkKOOmmc5JorHn14dfL2P/+Ffe4OTPTZgMX</dsig:X509Certificate>
+                        </dsig:X509Data>
+                    </dsig:KeyInfo>
+                </wsid:Identity>
+            </wsa:EndpointReference>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

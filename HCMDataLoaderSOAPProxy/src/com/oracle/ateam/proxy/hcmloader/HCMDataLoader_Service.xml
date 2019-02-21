@@ -1,0 +1,32 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!-- 
+Copyright © 2018, Oracle and/or its affiliates. All rights reserved.
+
+The Universal Permissive License (UPL), Version 1.0
+--><oracle-webservice-clients xmlns:ns2="http://java.sun.com/xml/ns/javaee">
+   <webservice-client>
+      <service-qname namespaceURI="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/"
+                     localpart="HCMDataLoader"/>
+      <port-info>
+         <wsdl-port namespaceURI="http://xmlns.oracle.com/apps/hcm/common/dataLoader/core/dataLoaderIntegrationService/"
+                    localpart="HCMDataLoaderSoapHttpPort"/>
+         <runtime/>
+         <policy-references>
+            <policy-reference category="security"
+                              uri="oracle/wss_username_token_over_ssl_client_policy"/>
+         </policy-references>
+         <operations>
+            <operation name="importAndLoadData"/>
+            <operation name="importAndLoadDataAsync"/>
+            <operation name="getDfltObjAttrHints"/>
+            <operation name="getServiceLastUpdateTime"/>
+            <operation name="getEntityList"/>
+            <operation name="getEntityListAsync"/>
+            <operation name="getDfltObjAttrHintsAsync"/>
+            <operation name="getServiceLastUpdateTimeAsync"/>
+            <operation name="getDataSetStatus"/>
+            <operation name="getDataSetStatusAsync"/>
+         </operations>
+      </port-info>
+   </webservice-client>
+</oracle-webservice-clients>
