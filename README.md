@@ -28,7 +28,7 @@ The second location is in the **HcmImportConstants.java** file, these are proper
 
 
 
-# Installation
+## Installation
 
 - Install JDeveloper 11g version 11.1.1.9, this is downloadable from Oracle OTN Website. 
 
@@ -80,7 +80,7 @@ The second location is in the **HcmImportConstants.java** file, these are proper
 
 - Modify the file as needed
 
-# Running the sample
+## Running the sample
 
 This example code takes a CSV file which contains lines of User and Worker data in a single line and subsequently creates HDL imports for both the user and worker. Before running the example ensure that
 
@@ -99,7 +99,7 @@ To run the file
 
 
 
-# Extending the sample
+## Extending the sample
 
 This example specifically focuses on User and Worker objects. If you want to extend it you can by
 
@@ -110,7 +110,23 @@ For more information please see the following article
 
 https://docs.oracle.com/en/solutions/load-data-into-hcm-cloud/index.html#GUID-2546E2DA-7B9A-475F-B953-17DC74F15427
 
-### Authors
+## Authors
 
 Angelo Santagata (ATeam Architect) and Ralf Buchmueller (EMEA Consulting Director)
+
+## Contributing
+
+This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
+
+## License
+
+Copyright (c) 2018, 2023 Oracle and/or its affiliates.
+
+Released under the Universal Permissive License v1.0 as shown at
+<https://oss.oracle.com/licenses/upl/>.
+
 
